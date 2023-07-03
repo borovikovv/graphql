@@ -5,22 +5,37 @@ import { formatDate } from '../lib/formatters';
 import {getJob} from "../lib/graphql/queries";
 
 function JobPage() {
-  const [job, setJob] = useState(null);
+  const [state, setState] = useState({
+    job: null,
+    loading: true,
+    error: false,
+  })
   const { jobId } = useParams();
 
   useEffect(() => {
     (async () => {
       try {
-        const result = await getJob(jobId);
+        const job = await getJob(jobId);
 
-        setJob(result);
+        setState({ job, error: false, loading: false });
       } catch(err) {
         console.error(err);
+        setState({ job: null, error: true, loading: false });
       }
     })()
   }, []);
 
-  if(!job) return <p>...Loading</p>
+  const { loading, job, error } = state;
+
+  if(loading) return <p>...Loading</p>
+
+  if(error) {
+    return <div className="has-text-danger">Load job error</div>
+  }
+
+  if(!job) {
+    return <div className='is-text is-primary'>No jobs found</div>
+  }
 
   return (
     <div>

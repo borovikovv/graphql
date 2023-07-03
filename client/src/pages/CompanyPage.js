@@ -4,22 +4,38 @@ import {getCompany} from "../lib/graphql/queries";
 import JobList from "../components/JobList";
 
 function CompanyPage() {
-  const [company, setCompany] = useState(null);
+  const [state, setState] = useState({
+    company: null,
+    loading: true,
+    error: false,
+  })
   const { companyId } = useParams();
 
   useEffect(() => {
     (async () => {
       try {
-        const result = await getCompany(companyId);
+        const company = await getCompany(companyId);
 
-        setCompany(result);
+        setState({company, loading: false, error: false});
       } catch(err) {
         console.error(err);
+        setState({company: null, loading: false, error: true});
       }
     })()
   }, []);
 
-  if(!company) return <p>...Loading</p>
+  const { company, loading, error } = state;
+
+  if(loading) return <p>...Loading</p>
+
+  if(error) {
+    return <div className="has-text-danger">Load data failed!</div>
+  }
+
+  if(!company) {
+    return <div className='is-text is-primary'>No company found</div>
+  }
+
 
   return (
     <div>
