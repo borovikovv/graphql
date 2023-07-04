@@ -1,2 +1,0 @@
-# graphql
-introduce to graphql
