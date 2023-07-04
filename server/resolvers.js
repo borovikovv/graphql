@@ -11,12 +11,15 @@ export const resolvers = {
        throw notFoundError(`Job with id: ${id} not found`);
       }
 
+      return job;
     },
     company: async (_root, { id }) => {
-      const {company} = await getCompany(id);
+      const company = await getCompany(id);
       if(!company) {
         throw notFoundError(`Company with id: ${id} not found`);
       }
+
+      return company;
     },
   },
   Job: {

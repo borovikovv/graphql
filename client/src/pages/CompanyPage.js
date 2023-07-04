@@ -32,11 +32,6 @@ function CompanyPage() {
     return <div className="has-text-danger">Load data failed!</div>
   }
 
-  if(!company) {
-    return <div className='is-text is-primary'>No company found</div>
-  }
-
-
   return (
     <div>
       <h1 className="title">

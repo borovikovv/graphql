@@ -33,10 +33,6 @@ function JobPage() {
     return <div className="has-text-danger">Load job error</div>
   }
 
-  if(!job) {
-    return <div className='is-text is-primary'>No jobs found</div>
-  }
-
   return (
     <div>
       <h1 className="title is-2">
