@@ -82,3 +82,19 @@ export async function createJob({ title, description }) {
 
   return job;
 }
+
+export async function deleteJob(jobId) {
+  const mutation = gql`
+    mutation DeleteJob($input: DeleteJobInput!) {
+        deleteJob(input: $input) {
+            id
+        }
+    }
+  `
+
+  const { id } = await client.request(mutation, {
+    input: { jobId }
+  })
+
+  return id;
+}

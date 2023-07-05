@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
+import {useNavigate, useParams} from 'react-router';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../lib/formatters';
-import {getJob} from "../lib/graphql/queries";
+import {getJob, deleteJob} from "../lib/graphql/queries";
 
 function JobPage() {
   const [state, setState] = useState({
@@ -11,6 +11,7 @@ function JobPage() {
     error: false,
   })
   const { jobId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -24,6 +25,17 @@ function JobPage() {
       }
     })()
   }, []);
+
+  const onDeleteJob = async () => {
+    try {
+      const id = await deleteJob(jobId);
+
+      console.log(`Job ${id} successful delete`);
+      navigate(`/`);
+    } catch(err) {
+      console.error(err);
+    }
+  }
 
   const { loading, job, error } = state;
 
@@ -51,6 +63,7 @@ function JobPage() {
           {job.description}
         </p>
       </div>
+      <button onClick={onDeleteJob} className="has-text-dark is-primary button">Delete this job</button>
     </div>
   );
 }
