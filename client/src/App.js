@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { getUser } from './lib/auth';
 import NavBar from './components/NavBar';
 import CompanyPage from './pages/CompanyPage';
-import CreateJobPage from './pages/CreateJobPage';
+import CreateOrEditJobPage from './pages/CreateOrEditJobPage';
 import HomePage from './pages/HomePage';
 import JobPage from './pages/JobPage';
 import LoginPage from './pages/LoginPage';
@@ -35,10 +35,13 @@ function App() {
             element={<CompanyPage />}
           />
           <Route path="/jobs/new"
-            element={<CreateJobPage />}
+            element={<CreateOrEditJobPage />}
           />
           <Route path="/jobs/:jobId"
             element={<JobPage />}
+          />
+          <Route path="/jobs/edit/:jobId"
+                 element={<CreateOrEditJobPage />}
           />
           <Route path="/login"
             element={<LoginPage onLogin={handleLogin} />}

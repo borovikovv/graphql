@@ -1,14 +1,33 @@
-import { useState } from 'react';
-import {useNavigate} from "react-router";
+import { useState, useEffect } from 'react';
+import {useNavigate, useParams} from "react-router";
 
-import {createJob} from "../lib/graphql/queries";
+import {createJob, getJob, updateJob} from "../lib/graphql/queries";
 
-function CreateJobPage() {
+function CreateOrEditJobPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const navigate = useNavigate();
+  const { jobId } = useParams();
 
-  const handleSubmit = async (event) => {
+  useEffect(() => {
+    setTitle('');
+    setDescription('');
+    if(!jobId) return;
+
+    (async () => {
+      try {
+        const job = await getJob(jobId);
+
+        setTitle(job.title);
+        setDescription(job.description);
+      } catch(err) {
+        console.error(err);
+      }
+    })()
+
+  }, [jobId]);
+
+  const handleCreate = async (event) => {
     event.preventDefault();
     try {
       const job = await createJob({title, description});
@@ -20,10 +39,31 @@ function CreateJobPage() {
     }
   };
 
+  const handleEdit = async (event) => {
+    event.preventDefault();
+    try {
+      const id = await updateJob({jobId, title, description});
+
+      navigate(`/jobs/${id}`);
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  const handleSubmit = (event) => {
+    if(jobId) {
+      void handleEdit(event);
+
+      return;
+    }
+
+    void handleCreate(event)
+  }
+
   return (
     <div>
       <h1 className="title">
-        New Job
+        {jobId ? 'Edit Job' : 'New Job'}
       </h1>
       <div className="box">
         <form>
@@ -50,7 +90,7 @@ function CreateJobPage() {
           <div className="field">
             <div className="control">
               <button className="button is-link" onClick={handleSubmit}>
-                Submit
+                {jobId ? 'Edit' :'Submit'}
               </button>
             </div>
           </div>
@@ -60,4 +100,4 @@ function CreateJobPage() {
   );
 }
 
-export default CreateJobPage;
+export default CreateOrEditJobPage;

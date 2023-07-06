@@ -37,6 +37,10 @@ function JobPage() {
     }
   }
 
+  const onEditJob = () => {
+      navigate(`/jobs/edit/${jobId}`);
+  }
+
   const { loading, job, error } = state;
 
   if(loading) return <p>...Loading</p>
@@ -63,7 +67,10 @@ function JobPage() {
           {job.description}
         </p>
       </div>
-      <button onClick={onDeleteJob} className="has-text-dark is-primary button">Delete this job</button>
+      <div>
+        <button onClick={onEditJob} className="has-text-black is-primary button mr-2">Edit this job</button>
+        <button onClick={onDeleteJob} className="has-text-white is-danger button">Delete this job</button>
+      </div>
     </div>
   );
 }
