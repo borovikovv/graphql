@@ -23,7 +23,10 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createJob: (_root, { input: { title, description }}) => {
+    createJob: (_root, { input: { title, description }}, { auth }) => {
+      if(!auth) {
+        throw unauthorized('Missing authorization!');
+      }
 
       return createJob({companyId: 'Gu7QW9LcnF5d', title ,description });
     },
@@ -46,6 +49,12 @@ export const resolvers = {
 function notFoundError(message) {
   return new GraphQLError(message, {
     extensions: { code: 'NOT_FOUND'}
+  });
+}
+
+function unauthorized(message) {
+  return new GraphQLError(message, {
+    extensions: { code: 'UNAUTHORIZED'}
   });
 }
 
