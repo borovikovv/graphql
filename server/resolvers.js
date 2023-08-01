@@ -23,12 +23,12 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createJob: (_root, { input: { title, description }}, { auth }) => {
-      if(!auth) {
+    createJob: (_root, { input: { title, description }}, { user }) => {
+      if(!user) {
         throw unauthorized('Missing authorization!');
       }
 
-      return createJob({companyId: 'Gu7QW9LcnF5d', title ,description });
+      return createJob({companyId: user.companyId, title ,description });
     },
     deleteJob: (_root, {input: {jobId}}) => {
       return deleteJob(jobId);
