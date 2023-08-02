@@ -30,8 +30,11 @@ export const resolvers = {
 
       return createJob({companyId: user.companyId, title ,description });
     },
-    deleteJob: (_root, {input: {jobId}}) => {
-      return deleteJob(jobId);
+    deleteJob: (_root, {input: {jobId}}, { user }) => {
+      if(!user) {
+        throw unauthorized('Missing authorization!');
+      }
+      return deleteJob(jobId, user.companyId);
     },
     updateJob: (_root, { input: { jobId, title, description }}) => {
       return updateJob({id: jobId, title, description})

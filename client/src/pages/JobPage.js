@@ -9,6 +9,7 @@ function JobPage() {
     job: null,
     loading: true,
     error: false,
+    errorMessage: '',
   })
   const { jobId } = useParams();
   const navigate = useNavigate();
@@ -18,10 +19,10 @@ function JobPage() {
       try {
         const job = await getJob(jobId);
 
-        setState({ job, error: false, loading: false });
+        setState({ job, error: false, loading: false, errorMessage: "" });
       } catch(err) {
         console.error(err);
-        setState({ job: null, error: true, loading: false });
+        setState({ job: null, error: true, loading: false, errorMessage: "Load job error" });
       }
     })()
   }, []);
@@ -34,6 +35,11 @@ function JobPage() {
       navigate(`/`);
     } catch(err) {
       console.error(err);
+      setState({
+        ...state,
+        errorMessage: `You can't delete this job`,
+        error: true,
+      })
     }
   }
 
@@ -46,7 +52,7 @@ function JobPage() {
   if(loading) return <p>...Loading</p>
 
   if(error) {
-    return <div className="has-text-danger">Load job error</div>
+    return <div className="has-text-danger">{`${state.errorMessage}: ${state.job.title}`}</div>
   }
 
   return (
