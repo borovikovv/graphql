@@ -6,6 +6,10 @@ import {createJob, getJob, updateJob} from "../lib/graphql/queries";
 function CreateOrEditJobPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [error, setError] = useState({
+    error: false,
+    errorMessage: '',
+  })
   const navigate = useNavigate();
   const { jobId } = useParams();
 
@@ -47,6 +51,10 @@ function CreateOrEditJobPage() {
       navigate(`/jobs/${id}`);
     } catch(err) {
       console.error(err);
+      setError({
+        error: true,
+        errorMessage: `You can't edit this job`
+      })
     }
   }
 
@@ -65,6 +73,10 @@ function CreateOrEditJobPage() {
       <h1 className="title">
         {jobId ? 'Edit Job' : 'New Job'}
       </h1>
+      {
+        error.error &&
+        <div className="has-text-danger">{`${error.errorMessage}`}</div>
+      }
       <div className="box">
         <form>
           <div className="field">
@@ -89,7 +101,7 @@ function CreateOrEditJobPage() {
           </div>
           <div className="field">
             <div className="control">
-              <button className="button is-link" onClick={handleSubmit}>
+              <button disabled={error.error} className="button is-link" onClick={handleSubmit}>
                 {jobId ? 'Edit' :'Submit'}
               </button>
             </div>

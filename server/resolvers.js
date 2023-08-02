@@ -36,8 +36,11 @@ export const resolvers = {
       }
       return deleteJob(jobId, user.companyId);
     },
-    updateJob: (_root, { input: { jobId, title, description }}) => {
-      return updateJob({id: jobId, title, description})
+    updateJob: (_root, { input: { jobId, title, description }}, { user }) => {
+      if(!user) {
+        throw unauthorized('Missing authorization!');
+      }
+      return updateJob({id: jobId, title, description, companyId: user.companyId})
     }
   },
   Job: {
