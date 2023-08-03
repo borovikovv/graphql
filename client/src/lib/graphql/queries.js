@@ -1,15 +1,21 @@
-import { GraphQLClient, gql } from "graphql-request";
-import {getAccessToken} from "../auth";
+import {ApolloClient, InMemoryCache, gql, createHttpLink, concat, ApolloLink} from "@apollo/client";
+import { getAccessToken } from "../auth";
 
-const client = new GraphQLClient('http://localhost:9000/graphql', {
-  headers: () => {
-    const accessToken = getAccessToken();
-
-    if(accessToken) {
-      return { Authorization: `Bearer ${accessToken}` }
-    }
-     return {};
+const httpLink = createHttpLink({ uri: 'http://localhost:9000/graphql' });
+const authLink = new ApolloLink((operation, forward) => {
+  const accessToken = getAccessToken();
+  if(accessToken) {
+    operation.setContext({
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
   }
+
+  return forward(operation);
+})
+
+const client = new ApolloClient({
+  link: concat(authLink, httpLink),
+  cache: new InMemoryCache(),
 });
 
 export async function getJobs() {
@@ -29,9 +35,9 @@ export async function getJobs() {
     }
   `
 
-  const { jobs } = await client.request(query);
+  const { data } = await client.query({ query });
 
-  return jobs;
+  return data.jobs;
 }
 
 export async function getJob(id) {
@@ -50,9 +56,12 @@ export async function getJob(id) {
       }
   `
 
-  const { job } = await client.request(query, { id });
+  const { data } = await client.query({
+    query,
+    variables: { id }
+  });
 
-  return job;
+  return data.job;
 }
 
 export async function getCompany(id) {
@@ -72,9 +81,12 @@ export async function getCompany(id) {
       }
   `
 
-  const { company } = await client.request(query, { id });
+  const { data } = await client.query({
+    query,
+    variables: { id }
+  });
 
-  return company;
+  return data.company;
 }
 
 export async function createJob({ title, description }) {
@@ -86,11 +98,14 @@ export async function createJob({ title, description }) {
     }
   `
 
-  const { job } =  await client.request(mutation, {
-    input: { title, description }
-  });
+  const { data } = await client.mutate({
+    mutation,
+    variables: {
+      input: { title, description }
+    }
+  })
 
-  return job;
+  return data.job;
 }
 
 export async function deleteJob(jobId) {
@@ -102,11 +117,14 @@ export async function deleteJob(jobId) {
     }
   `
 
-  const { id } = await client.request(mutation, {
-    input: { jobId }
-  })
+  const { data } = await client.mutate({
+    mutation,
+    variables: {
+      input: { jobId }
+    }
+  });
 
-  return id;
+  return data.id;
 }
 
 export async function updateJob({jobId, title, description}) {
@@ -118,9 +136,12 @@ export async function updateJob({jobId, title, description}) {
       }
   `
 
-  const { job } = await client.request(mutation, {
-    input: { jobId, title, description }
+  const { data } = await client.mutate({
+    mutation,
+    variables: {
+      input: { jobId, title, description },
+    }
   });
 
-  return job.id;
+  return data.job.id;
 }
