@@ -35,7 +35,7 @@ export async function getJobs() {
     }
   `
 
-  const { data } = await client.query({ query });
+  const { data } = await client.query({ query, fetchPolicy: 'network-only' });
 
   return data.jobs;
 }
@@ -58,7 +58,8 @@ export async function getJob(id) {
 
   const { data } = await client.query({
     query,
-    variables: { id }
+    variables: { id },
+    fetchPolicy: 'network-only',
   });
 
   return data.job;
