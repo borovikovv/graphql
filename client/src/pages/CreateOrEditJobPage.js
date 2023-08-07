@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import {useNavigate, useParams} from "react-router";
 
-import {createJob, getJob, updateJob} from "../lib/graphql/queries";
+import {getJob, updateJob} from "../lib/graphql/queries";
+import {useCreateJob} from "../lib/graphql/hooks";
 
 function CreateOrEditJobPage() {
   const [title, setTitle] = useState('');
@@ -9,7 +10,8 @@ function CreateOrEditJobPage() {
   const [error, setError] = useState({
     error: false,
     errorMessage: '',
-  })
+  });
+  const {mutate, loading, job } = useCreateJob(title, description);
   const navigate = useNavigate();
   const { jobId } = useParams();
 
@@ -31,16 +33,18 @@ function CreateOrEditJobPage() {
 
   }, [jobId]);
 
-  const handleCreate = async (event) => {
-    event.preventDefault();
-    try {
-      const job = await createJob({title, description});
+  useEffect(() => {
+    if(job) {
       console.log('Success created new job:', job.id);
 
       navigate(`/jobs/${job.id}`);
-    } catch(err) {
-      console.error(err);
     }
+  }, [job])
+
+  const handleCreate = async (event) => {
+    event.preventDefault();
+
+    await mutate();
   };
 
   const handleEdit = async (event) => {
@@ -101,7 +105,7 @@ function CreateOrEditJobPage() {
           </div>
           <div className="field">
             <div className="control">
-              <button disabled={error.error} className="button is-link" onClick={handleSubmit}>
+              <button disabled={error.error || loading} className="button is-link" onClick={handleSubmit}>
                 {jobId ? 'Edit' :'Submit'}
               </button>
             </div>
