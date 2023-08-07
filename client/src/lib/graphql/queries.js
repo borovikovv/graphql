@@ -47,7 +47,7 @@ export const getCompanyById = gql`
     }
 `;
 
-const getJobQuery =  gql`
+export const getJobQuery =  gql`
     query Job($id: ID!) {
         job(id: $id) {
             ...JobDetail
@@ -71,12 +71,6 @@ export const getJobsQuery = gql`
         }
     }
 `
-
-export async function getJobs() {
-  const { data } = await client.query({ query: getJobsQuery, fetchPolicy: 'network-only' });
-
-  return data.jobs;
-}
 
 export async function getJob(id) {
   const { data } = await client.query({

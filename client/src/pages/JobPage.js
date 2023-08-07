@@ -1,31 +1,13 @@
-import { useState, useEffect } from 'react';
 import {useNavigate, useParams} from 'react-router';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../lib/formatters';
-import {getJob, deleteJob} from "../lib/graphql/queries";
+import {deleteJob} from "../lib/graphql/queries";
+import {useJob} from "../lib/graphql/hooks";
 
 function JobPage() {
-  const [state, setState] = useState({
-    job: null,
-    loading: true,
-    error: false,
-    errorMessage: '',
-  })
   const { jobId } = useParams();
+  const { job, error, loading} = useJob(jobId);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const job = await getJob(jobId);
-
-        setState({ job, error: false, loading: false, errorMessage: "" });
-      } catch(err) {
-        console.error(err);
-        setState({ job: null, error: true, loading: false, errorMessage: "Load job error" });
-      }
-    })()
-  }, []);
 
   const onDeleteJob = async () => {
     try {
@@ -35,11 +17,6 @@ function JobPage() {
       navigate(`/`);
     } catch(err) {
       console.error(err);
-      setState({
-        ...state,
-        errorMessage: `You can't delete this job`,
-        error: true,
-      })
     }
   }
 
@@ -47,12 +24,10 @@ function JobPage() {
       navigate(`/jobs/edit/${jobId}`);
   }
 
-  const { loading, job, error } = state;
-
   if(loading) return <p>...Loading</p>
 
   if(error) {
-    return <div className="has-text-danger">{`${state.errorMessage}: ${state.job.title}`}</div>
+    return <div className="has-text-danger">`You can't delete this job`</div>
   }
 
   return (
