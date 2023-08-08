@@ -11,7 +11,7 @@ function CreateOrEditJobPage() {
     error: false,
     errorMessage: '',
   });
-  const {mutate, loading } = useCreateJob(title, description);
+  const {createJob, loading } = useCreateJob();
   const navigate = useNavigate();
   const { jobId } = useParams();
 
@@ -36,7 +36,7 @@ function CreateOrEditJobPage() {
   const handleCreate = async (event) => {
     event.preventDefault();
 
-    const { data: { job }} = await mutate();
+    const job = await createJob(title, description);
 
     console.log('Success created new job:', job?.id);
 

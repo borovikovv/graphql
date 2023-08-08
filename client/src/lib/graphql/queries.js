@@ -91,38 +91,10 @@ export const createJobMutation = gql`
     ${jobDetailFragment}
 `;
 
-export async function createJob({ title, description }) {
-  const mutation = gql`
-    mutation CreateJob($input: CreateJobInput!) {
-        job: createJob(input: $input) {
-            ...JobDetail,
-        }
-    }
-    
-    ${jobDetailFragment}
-  `;
-
-  const { data } = await client.mutate({
-    mutation,
-    variables: {
-      input: { title, description }
-    },
-    update: (cache, { data }) => {
-      cache.writeQuery({
-        query: getJobQuery,
-        variables: { id: data.job.id },
-        data,
-      });
-    }
-  })
-
-  return data.job;
-}
-
 export async function deleteJob(jobId) {
   const mutation = gql`
     mutation DeleteJob($input: DeleteJobInput!) {
-        job :deleteJob(input: $input) {
+        job: deleteJob(input: $input) {
             id
         }
     }
