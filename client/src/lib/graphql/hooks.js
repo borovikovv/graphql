@@ -37,5 +37,5 @@ export function useCreateJob(title, description) {
     }
   });
 
-  return { mutate, loading: result?.loading, job: result.data?.job };
+  return { mutate, loading: result?.loading };
 }

@@ -11,7 +11,7 @@ function CreateOrEditJobPage() {
     error: false,
     errorMessage: '',
   });
-  const {mutate, loading, job } = useCreateJob(title, description);
+  const {mutate, loading } = useCreateJob(title, description);
   const navigate = useNavigate();
   const { jobId } = useParams();
 
@@ -33,18 +33,14 @@ function CreateOrEditJobPage() {
 
   }, [jobId]);
 
-  useEffect(() => {
-    if(job) {
-      console.log('Success created new job:', job.id);
-
-      navigate(`/jobs/${job.id}`);
-    }
-  }, [job])
-
   const handleCreate = async (event) => {
     event.preventDefault();
 
-    await mutate();
+    const { data: { job }} = await mutate();
+
+    console.log('Success created new job:', job?.id);
+
+    navigate(`/jobs/${job?.id}`);
   };
 
   const handleEdit = async (event) => {
