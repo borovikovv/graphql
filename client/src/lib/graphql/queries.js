@@ -57,7 +57,7 @@ export const getJobQuery =  gql`
 `
 
 export const getJobsQuery = gql`
-    query {
+    query Jobs {
         jobs {
             date
             description

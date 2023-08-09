@@ -10,7 +10,12 @@ export function useCompany(id) {
 }
 
 export function useJobs() {
-  const { error, loading, data } = useQuery(getJobsQuery)
+  const { error, loading, data } = useQuery(
+    getJobsQuery,
+    {
+      fetchPolicy: 'network-only',
+    }
+  )
 
   return { error, loading, jobs: data?.jobs };
 }
