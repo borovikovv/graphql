@@ -1,6 +1,6 @@
-import { GraphQLError } from "graphql";
+import {GraphQLError} from "graphql";
 import {getJob, getJobs, getJobsByCompany, createJob, deleteJob, updateJob} from "./db/jobs.js";
-import {getCompany} from "./db/companies.js";
+import { companyLoader, getCompany } from './db/companies.js';
 
 export const resolvers = {
   Query: {
@@ -44,7 +44,7 @@ export const resolvers = {
     }
   },
   Job: {
-    company: async (job) => await getCompany(job.companyId),
+    company: (job) => companyLoader.load(job.companyId),
     date: (job) => toIsoDate(job.createdAt),
   },
   Company: {
