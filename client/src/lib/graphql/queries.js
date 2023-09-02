@@ -57,17 +57,20 @@ export const getJobQuery =  gql`
 `
 
 export const getJobsQuery = gql`
-    query Jobs {
-        jobs {
-            date
-            description
-            id
-            title
-            company {
-                id
-                name
+    query Jobs($limit: Int, $offset: Int) {
+        jobs(limit: $limit, offset: $offset) {
+            items {
+                date
                 description
+                id
+                title
+                company {
+                    id
+                    name
+                    description
+                }
             }
+            itemsCount
         }
     }
 `

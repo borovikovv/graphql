@@ -9,11 +9,15 @@ export function useCompany(id) {
   return { error, loading, company: data?.company };
 }
 
-export function useJobs() {
+export function useJobs(limit, offset) {
   const { error, loading, data } = useQuery(
     getJobsQuery,
     {
       fetchPolicy: 'network-only',
+      variables: {
+        limit,
+        offset
+      }
     }
   )
 
